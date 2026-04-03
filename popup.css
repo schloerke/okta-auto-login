@@ -128,6 +128,24 @@ input[type="number"]:focus {
   border-color: #4CAF50;
 }
 
+/* Select Dropdown */
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
 /* Status Section */
 .status-section {
   background: #f9f9f9;
