@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(convert:*)",
-      "Bash(ls:*)"
-    ]
-  }
-}
