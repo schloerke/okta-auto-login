@@ -137,7 +137,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const settings = await chrome.storage.local.get(['autoClose', 'autoCloseDelay']);
   if (settings.autoClose === false) return;
 
-  const delay = settings.autoCloseDelay ?? 500;
+  const raw = settings.autoCloseDelay ?? 500;
+  const delay = [0, 500, 1000, 3000].includes(raw) ? raw : 500;
 
   // Verify page content contains approval text
   let results;
