@@ -72,6 +72,32 @@
       <input type="number" id="delay-input" min="0" max="5000" step="100" value="500">
     </div>
 
+    <div class="section">
+      <div class="setting-row">
+        <label for="auto-close-toggle" class="setting-label">
+          <span>Auto-close AWS callback window</span>
+          <p class="setting-description">Close the "Request approved" tab automatically after login</p>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="auto-close-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <label for="auto-close-delay-select" class="setting-label">
+        <span>Callback close delay</span>
+        <p class="setting-description">How long to wait before closing the callback tab</p>
+      </label>
+      <select id="auto-close-delay-select">
+        <option value="0">Immediately</option>
+        <option value="500" selected>500ms</option>
+        <option value="1000">1s</option>
+        <option value="3000">3s</option>
+      </select>
+    </div>
+
     <div class="section status-section">
       <div class="status-indicator">
         <span class="status-dot" id="status-dot"></span>
