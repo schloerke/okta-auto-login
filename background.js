@@ -90,9 +90,14 @@ chrome.runtime.onInstalled.addListener(async () => {
   console.log('[Okta Auto-Login] Extension installed');
 
   // Set default settings
-  const settings = await chrome.storage.local.get(['enabled', 'delay']);
-  if (settings.enabled === undefined) {
-    await chrome.storage.local.set({ enabled: true, delay: 500 });
+  const settings = await chrome.storage.local.get(['enabled', 'delay', 'autoClose', 'autoCloseDelay']);
+  const defaults = {};
+  if (settings.enabled === undefined) defaults.enabled = true;
+  if (settings.delay === undefined) defaults.delay = 500;
+  if (settings.autoClose === undefined) defaults.autoClose = true;
+  if (settings.autoCloseDelay === undefined) defaults.autoCloseDelay = 500;
+  if (Object.keys(defaults).length > 0) {
+    await chrome.storage.local.set(defaults);
   }
 
   // Set initial badge
