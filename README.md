@@ -7,7 +7,8 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 - ✅ Automatically fills username on the first Okta login page
 - ✅ Automatically fills password on the second page
 - ✅ Automatically triggers push notifications to Okta Verify
-- ✅ Uses Chrome's native password manager (no credentials stored in extension)
+- ✅ Automatically closes the AWS SSO "Request approved" callback tab
+- ✅ Credentials stored in extension storage, encrypted with a master password
 - ✅ Configurable delays between actions
 - ✅ Easy enable/disable toggle
 - ✅ Visual notifications during automation
@@ -15,18 +16,20 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 ## How It Works
 
 1. Extension detects Okta login pages automatically
-2. Waits for Chrome's password manager to autofill credentials
-3. Automatically submits username and password forms
-4. Triggers the "Send Push" button for MFA
-5. You manually approve the push notification on your device
-6. Login completes automatically
+2. Prompts for your master password once per browser session to decrypt stored credentials
+3. Automatically fills and submits the username form
+4. Automatically fills and submits the password form
+5. Triggers the "Send Push" button for MFA
+6. You manually approve the push notification on your device
+7. Login completes automatically
+8. If using AWS SSO (`aws sso login`), the "Request approved" callback tab is automatically closed after a configurable delay
 
 ## Installation
 
 ### Prerequisites
 
 - Google Chrome browser
-- Okta credentials saved in Chrome's password manager
+- Your Okta username and password
 
 ### Steps
 
@@ -55,30 +58,27 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
    - Open Chrome and navigate to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right corner)
    - Click "Load unpacked"
-   - Select the `/Users/barret/tmp/okta-auto-login` directory
+   - Select the `okta-auto-login` directory
    - The extension should now appear in your extensions list
 
 4. **Configure the extension**
    - Click the extension icon in your toolbar
+   - Enter your Okta username and password
+   - Set a master password to encrypt your stored credentials
    - Make sure "Enable Auto-Login" is toggled ON
-   - Adjust delay if needed (default 500ms works for most cases)
-
-5. **Save your Okta credentials in Chrome**
-   - Navigate to your Okta login page manually
-   - Enter your username and password
-   - When Chrome prompts to save the password, click "Save"
-   - This is required for the extension to work
+   - Adjust delays if needed (default 500ms works for most cases)
 
 ## Usage
 
 1. **Enable the extension** via the popup (click the extension icon)
-2. **Navigate to your Okta login page**
-3. The extension will automatically:
+2. **Navigate to your Okta login page** (or run `aws sso login`)
+3. **Enter your master password** when prompted to unlock the session
+4. The extension will automatically:
    - Fill your username and submit
    - Fill your password and submit
    - Click "Send Push" for MFA
-4. **Approve the push notification** on your device manually
-5. Login completes automatically
+5. **Approve the push notification** on your device manually
+6. Login completes — the AWS SSO callback tab is closed automatically if applicable
 
 ## Configuration
 
@@ -86,6 +86,8 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 
 - **Enable Auto-Login**: Toggle to enable/disable automation
 - **Delay Between Actions**: Wait time in milliseconds between form submissions (default: 500ms)
+- **Auto-close AWS callback window**: Automatically close the "Request approved" tab after `aws sso login` (default: on)
+- **Callback close delay**: How long to wait before closing the AWS callback tab (default: 500ms)
 
 ### Supported Okta Domains
 
@@ -96,21 +98,22 @@ The extension works on:
 
 ## Security
 
-- **No credentials are stored in the extension** - relies entirely on Chrome's password manager
-- All credential handling is done by Chrome's native autofill
-- Extension only triggers form submissions and button clicks
+- **Credentials are encrypted** with a master password using AES-256-GCM before being stored in Chrome's extension storage
+- The master password is never stored — it is held in memory only for the duration of the browser session
+- Extension only triggers form submissions and button clicks on Okta pages
 - Works only on official Okta domains (cannot be abused on phishing sites)
+- The AWS callback auto-close only fires on `127.0.0.1/oauth/callback` pages that contain "Request approved" — no other pages are affected
 
 ## Troubleshooting
 
 ### Extension doesn't auto-fill credentials
 
-**Solution**: Make sure your Okta credentials are saved in Chrome's password manager.
+**Solution**: Make sure your Okta credentials are configured in the extension popup.
 
-1. Go to `chrome://settings/passwords`
-2. Search for your Okta domain
-3. Verify credentials are saved
-4. If not, manually log in once and save when prompted
+1. Click the extension icon
+2. Verify your username and password are entered
+3. Make sure "Enable Auto-Login" is toggled ON
+4. Reload the Okta page and enter your master password when prompted
 
 ### Forms don't submit automatically
 
@@ -177,7 +180,6 @@ To modify delays or selectors:
 
 ## Limitations
 
-- Requires Chrome's password manager to have saved credentials
 - Only works on Okta pages (by design, for security)
 - Cannot automatically approve push notifications (requires manual action)
 - May break if Okta significantly changes their UI
@@ -185,11 +187,10 @@ To modify delays or selectors:
 ## Privacy
 
 This extension:
-- Does NOT store any passwords or credentials
+- Stores credentials **locally only**, encrypted with your master password
 - Does NOT send any data to external servers
 - Does NOT track your usage
-- Only runs on Okta domains
-- Uses Chrome's native password autofill exclusively
+- Only runs on Okta domains and `127.0.0.1` (for AWS SSO callback)
 
 ## License
 
@@ -204,4 +205,4 @@ Current version: 1.0.0
 For issues or questions:
 1. Check the Troubleshooting section above
 2. Review browser console logs (F12)
-3. Verify Chrome password manager has your credentials saved
+3. Open an issue at https://github.com/schloerke/okta-auto-login/issues
