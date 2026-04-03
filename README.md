@@ -33,35 +33,19 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 
 ### Steps
 
-1. **Clone or download this repository**
+1. **Clone this repository**
    ```bash
-   cd /path/to/okta-auto-login
+   git clone https://github.com/schloerke/okta-auto-login.git
    ```
 
-2. **Create icon images** (if needed)
-
-   The extension requires three icon sizes. Convert the SVG template:
-   ```bash
-   # If you have ImageMagick installed:
-   cd icons
-   convert icon.svg -resize 16x16 icon16.png
-   convert icon.svg -resize 48x48 icon48.png
-   convert icon.svg -resize 128x128 icon128.png
-   ```
-
-   Or use an online converter like [CloudConvert](https://cloudconvert.com/svg-to-png) to create:
-   - `icons/icon16.png` (16x16 pixels)
-   - `icons/icon48.png` (48x48 pixels)
-   - `icons/icon128.png` (128x128 pixels)
-
-3. **Load the extension in Chrome**
+2. **Load the extension in Chrome**
    - Open Chrome and navigate to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right corner)
    - Click "Load unpacked"
    - Select the `okta-auto-login` directory
    - The extension should now appear in your extensions list
 
-4. **Configure the extension**
+3. **Configure the extension**
    - Click the extension icon in your toolbar
    - Enter your Okta username and password
    - Set a master password to encrypt your stored credentials
