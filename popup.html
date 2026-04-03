@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Okta Auto-Login Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Okta Auto-Login</h1>
+
+    <!-- Master Password Prompt (shown when locked) -->
+    <div class="section" id="master-password-section" style="display: none;">
+      <h3>🔒 Session Locked</h3>
+      <label for="master-password-input" class="setting-label">
+        <span>Master Password</span>
+        <p class="setting-description">Enter your master password to unlock this session</p>
+      </label>
+      <input type="password" id="master-password-input" placeholder="••••••••" autocomplete="off">
+      <button id="unlock-button" class="button button-primary" style="margin-top: 12px; width: 100%; padding: 10px;">Unlock</button>
+      <div id="unlock-error" style="color: #d32f2f; font-size: 12px; margin-top: 8px; display: none;"></div>
+    </div>
+
+    <!-- Main Settings (shown when unlocked) -->
+    <div id="main-settings" style="display: none;">
+    <div class="section">
+      <div class="setting-row">
+        <label for="enabled-toggle" class="setting-label">
+          <span>Enable Auto-Login</span>
+          <p class="setting-description">Automatically fill credentials and trigger push notifications</p>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="enabled-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <label for="master-password-setup-input" class="setting-label">
+        <span>Master Password</span>
+        <p class="setting-description">Required to encrypt/decrypt your credentials (stored in memory only)</p>
+      </label>
+      <input type="password" id="master-password-setup-input" placeholder="••••••••" autocomplete="new-password">
+      <p class="setting-description" style="margin-top: 8px; font-size: 11px; color: #999;">
+        You'll enter this once per browser session to unlock auto-login
+      </p>
+    </div>
+
+    <div class="section">
+      <label for="username-input" class="setting-label">
+        <span>Okta Username</span>
+        <p class="setting-description">Your Okta email address</p>
+      </label>
+      <input type="text" id="username-input" placeholder="username@posit.co" autocomplete="username">
+    </div>
+
+    <div class="section">
+      <label for="password-input" class="setting-label">
+        <span>Okta Password</span>
+        <p class="setting-description">Encrypted with your master password</p>
+      </label>
+      <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <div class="section">
+      <label for="delay-input" class="setting-label">
+        <span>Delay Between Actions (ms)</span>
+        <p class="setting-description">Wait time between auto-fill actions (default: 500ms)</p>
+      </label>
+      <input type="number" id="delay-input" min="0" max="5000" step="100" value="500">
+    </div>
+
+    <div class="section status-section">
+      <div class="status-indicator">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Loading...</span>
+      </div>
+    </div>
+
+    <div class="section info-section">
+      <h3>Setup Instructions</h3>
+      <ol>
+        <li><strong>Set master password</strong> - Choose a strong password to encrypt your credentials</li>
+        <li><strong>Enter Okta username</strong> - Your Okta email address</li>
+        <li><strong>Enter Okta password</strong> - Will be encrypted with your master password</li>
+        <li><strong>Enable auto-login</strong> using the toggle</li>
+        <li><strong>Navigate to Okta</strong> - Auto-login will work automatically!</li>
+      </ol>
+
+      <div class="warning">
+        <strong>🔒 Security:</strong> Your Okta password is encrypted with your master password.
+        The master password is stored in memory only and cleared when you close Chrome.
+        You'll need to unlock once per browser session.
+      </div>
+
+      <p style="font-size: 12px; color: #666; margin-top: 12px;">
+        See <code>MASTER-PASSWORD.md</code> for detailed security information.
+      </p>
+    </div>
+    </div><!-- End main-settings -->
+
+    <div class="footer">
+      <span class="version">v1.0.0</span>
+    </div>
+  </div>
+  <script src="crypto.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
