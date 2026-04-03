@@ -115,3 +115,52 @@ chrome.storage.local.get(['enabled']).then((settings) => {
     chrome.action.setBadgeBackgroundColor({ color: '#999' });
   }
 });
+
+// Auto-close AWS SSO oauth callback tab
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.status !== 'complete') return;
+  if (!tab.url) return;
+
+  // Check URL shape: host must be 127.0.0.1, path must be /oauth/callback,
+  // query must contain both code= and state=
+  let url;
+  try {
+    url = new URL(tab.url);
+  } catch {
+    return;
+  }
+  if (url.hostname !== '127.0.0.1') return;
+  if (url.pathname !== '/oauth/callback') return;
+  if (!url.searchParams.has('code') || !url.searchParams.has('state')) return;
+
+  // Check setting
+  const settings = await chrome.storage.local.get(['autoClose', 'autoCloseDelay']);
+  if (settings.autoClose === false) return;
+
+  const delay = settings.autoCloseDelay ?? 500;
+
+  // Verify page content contains approval text
+  let results;
+  try {
+    results = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        const text = document.body?.innerText ?? '';
+        return text.toLowerCase().includes('request approved') ||
+               text.toLowerCase().includes('you can close this window');
+      }
+    });
+  } catch (err) {
+    console.error('[Okta Auto-Login] Could not inspect callback page:', err);
+    return;
+  }
+
+  if (!results?.[0]?.result) return;
+
+  console.log(`[Okta Auto-Login] AWS callback confirmed. Closing tab in ${delay}ms...`);
+  setTimeout(() => {
+    chrome.tabs.remove(tabId).catch((err) => {
+      console.log('[Okta Auto-Login] Tab already closed:', err.message);
+    });
+  }, delay);
+});
