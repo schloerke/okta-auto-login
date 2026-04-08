@@ -8,6 +8,7 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 - ✅ Automatically fills password on the second page
 - ✅ Automatically triggers push notifications to Okta Verify
 - ✅ Automatically closes the AWS SSO "Request approved" callback tab
+- ✅ Automatically clicks "Continue" on GitHub business SSO login prompts
 - ✅ Credentials stored in extension storage, encrypted with a master password
 - ✅ Configurable delays between actions
 - ✅ Easy enable/disable toggle
@@ -23,6 +24,7 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 6. You manually approve the push notification on your device
 7. Login completes automatically
 8. If using AWS SSO (`aws sso login`), the "Request approved" callback tab is automatically closed after a configurable delay
+9. If GitHub responds with a business SSO prompt, the "Continue" button is automatically clicked after a configurable delay
 
 ## Installation
 
@@ -72,13 +74,18 @@ A Chrome extension that automates the Okta SAML login flow by auto-filling crede
 - **Delay Between Actions**: Wait time in milliseconds between form submissions (default: 500ms)
 - **Auto-close AWS callback window**: Automatically close the "Request approved" tab after `aws sso login` (default: on)
 - **Callback close delay**: How long to wait before closing the AWS callback tab (default: 500ms)
+- **GitHub SSO Auto-Continue**: Automatically click "Continue" on GitHub business SSO prompts (default: on)
+- **SSO click delay**: How long to wait before clicking Continue on GitHub SSO prompts (default: 500ms)
 
-### Supported Okta Domains
+### Supported Domains
 
-The extension works on:
+The Okta auto-login works on:
 - `*.okta.com`
 - `*.oktapreview.com`
 - `*.okta-emea.com`
+
+The GitHub SSO auto-continue works on:
+- `*.github.com`
 
 ## Security
 
@@ -87,6 +94,7 @@ The extension works on:
 - Extension only triggers form submissions and button clicks on Okta pages
 - Works only on official Okta domains (cannot be abused on phishing sites)
 - The AWS callback auto-close only fires on `127.0.0.1/oauth/callback` pages that contain "Request approved" — no other pages are affected
+- The GitHub SSO auto-continue only fires when a `div.business-sso-panel` containing "Authenticate your account" is detected — no other GitHub pages are affected
 
 ## Troubleshooting
 
@@ -125,23 +133,25 @@ The extension works on:
 
 ```
 okta-auto-login/
-├── manifest.json       # Extension configuration (Manifest V3)
-├── popup.html          # Settings UI
-├── popup.css           # UI styling
-├── popup.js            # Settings logic
-├── content.js          # Main automation script
-├── background.js       # Service worker
-├── icons/              # Extension icons
-│   ├── icon.svg        # SVG template
-│   ├── icon16.png      # 16x16 icon
-│   ├── icon48.png      # 48x48 icon
-│   └── icon128.png     # 128x128 icon
-└── readme.md           # This file
+├── manifest.json        # Extension configuration (Manifest V3)
+├── popup.html           # Settings UI
+├── popup.css            # UI styling
+├── popup.js             # Settings logic
+├── content.js           # Okta automation script
+├── content-github.js    # GitHub SSO auto-continue script
+├── background.js        # Service worker
+├── icons/               # Extension icons
+│   ├── icon.svg         # SVG template
+│   ├── icon16.png       # 16x16 icon
+│   ├── icon48.png       # 48x48 icon
+│   └── icon128.png      # 128x128 icon
+└── readme.md            # This file
 ```
 
 ### Key Components
 
-- **content.js**: Detects page type, waits for autofill, and submits forms
+- **content.js**: Detects Okta page type, waits for autofill, and submits forms
+- **content-github.js**: Detects GitHub SSO panel and clicks "Continue"
 - **popup.js**: Handles settings UI and saves configuration
 - **background.js**: Coordinates between popup and content scripts, manages badge
 
@@ -164,9 +174,10 @@ To modify delays or selectors:
 
 ## Limitations
 
-- Only works on Okta pages (by design, for security)
+- Okta auto-login only works on Okta pages (by design, for security)
 - Cannot automatically approve push notifications (requires manual action)
 - May break if Okta significantly changes their UI
+- GitHub SSO auto-continue may break if GitHub changes the `business-sso-panel` structure
 
 ## Privacy
 
@@ -174,7 +185,7 @@ This extension:
 - Stores credentials **locally only**, encrypted with your master password
 - Does NOT send any data to external servers
 - Does NOT track your usage
-- Only runs on Okta domains and `127.0.0.1` (for AWS SSO callback)
+- Only runs on Okta domains, `*.github.com`, and `127.0.0.1` (for AWS SSO callback)
 
 ## License
 

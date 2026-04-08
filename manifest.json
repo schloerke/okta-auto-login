@@ -13,7 +13,8 @@
     "*://*.okta.com/*",
     "*://*.oktapreview.com/*",
     "*://*.okta-emea.com/*",
-    "http://127.0.0.1/*"
+    "http://127.0.0.1/*",
+    "*://*.github.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -42,6 +43,12 @@
         "*://*.okta-emea.com/*"
       ],
       "js": ["crypto.js", "content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*.github.com/*"],
+      "js": ["content-github.js"],
       "run_at": "document_idle",
       "all_frames": false
     }

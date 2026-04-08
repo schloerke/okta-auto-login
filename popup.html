@@ -86,6 +86,33 @@
     </div>
 
     <div class="section">
+      <div class="setting-row">
+        <label for="github-sso-toggle" class="setting-label">
+          <span>GitHub SSO Auto-Continue</span>
+          <p class="setting-description">Automatically click Continue on GitHub SSO login prompts</p>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="github-sso-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <label for="github-sso-delay-select" class="setting-label">
+        <span>SSO click delay</span>
+        <p class="setting-description">How long to wait before clicking Continue</p>
+      </label>
+      <select id="github-sso-delay-select">
+        <option value="0">Immediately</option>
+        <option value="250">250ms</option>
+        <option value="500" selected>500ms</option>
+        <option value="1000">1s</option>
+        <option value="2000">2s</option>
+      </select>
+    </div>
+
+    <div class="section">
       <label for="auto-close-delay-select" class="setting-label">
         <span>Callback close delay</span>
         <p class="setting-description">How long to wait before closing the callback tab</p>
