@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const delayInput = document.getElementById('delay-input');
   const autoCloseToggle = document.getElementById('auto-close-toggle');
   const autoCloseDelaySelect = document.getElementById('auto-close-delay-select');
+  const githubSsoToggle = document.getElementById('github-sso-toggle');
+  const githubSsoDelaySelect = document.getElementById('github-sso-delay-select');
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
 
@@ -95,13 +97,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainSettings.style.display = 'block';
 
     // Load saved settings
-    const settings = await chrome.storage.local.get(['enabled', 'username', 'password', 'delay', 'autoClose', 'autoCloseDelay']);
+    const settings = await chrome.storage.local.get(['enabled', 'username', 'password', 'delay', 'autoClose', 'autoCloseDelay', 'githubSsoEnabled', 'githubSsoDelay']);
 
     enabledToggle.checked = settings.enabled !== false; // Default to true
     usernameInput.value = settings.username || '';
     delayInput.value = settings.delay || 500;
     autoCloseToggle.checked = settings.autoClose !== false; // Default to true
     autoCloseDelaySelect.value = String(settings.autoCloseDelay ?? 500);
+    githubSsoToggle.checked = settings.githubSsoEnabled !== false; // Default true
+    githubSsoDelaySelect.value = String(settings.githubSsoDelay ?? 500);
 
     // Decrypt password if it exists
     if (settings.password && masterPassword) {
@@ -207,6 +211,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Save auto-close delay
   autoCloseDelaySelect.addEventListener('change', async (e) => {
     await chrome.storage.local.set({ autoCloseDelay: parseInt(e.target.value, 10) });
+  });
+
+  // Save GitHub SSO toggle
+  githubSsoToggle.addEventListener('change', async (e) => {
+    await chrome.storage.local.set({ githubSsoEnabled: e.target.checked });
+  });
+
+  // Save GitHub SSO delay
+  githubSsoDelaySelect.addEventListener('change', async (e) => {
+    await chrome.storage.local.set({ githubSsoDelay: parseInt(e.target.value, 10) });
   });
 
   function updateStatus(enabled, username, password) {
