@@ -23,9 +23,6 @@
 
   let handled = false;
 
-  // Kick off detection
-  checkForSsoPanel();
-
   const observer = new MutationObserver(() => {
     if (!handled) {
       checkForSsoPanel();
@@ -33,6 +30,9 @@
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
+
+  // Kick off detection after observer is ready
+  checkForSsoPanel();
 
   async function checkForSsoPanel() {
     const panel = document.querySelector('div.business-sso-panel');
